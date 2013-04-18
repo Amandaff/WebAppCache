@@ -1,0 +1,10 @@
+CACHE MANIFEST
+
+#update v1.0.0
+#author zawa
+
+NETWORK:
+*
+
+CACHE:
+WebAppCache.js

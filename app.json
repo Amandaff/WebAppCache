@@ -1,0 +1,44 @@
+{
+  	"expire": "10",
+	"jsCore": ["app"],
+	"cssCore": ["app"],
+	"jsConfig": {
+		"path": "demo/js/",
+		"suffix": ".js"
+	},
+	"cssConfig": {
+		"path": "demo/css/",
+		"suffix": ".css"
+	},
+	"pageConfig": {
+		"path": "demo/",
+		"suffix": ".html"
+	},
+	"js": {
+		"app": {
+			"url": "demo/js/app.js",
+			"v": "1.0.0"
+		},
+		"demo": {
+			"url": "demo/js/demo.js",
+			"v": "1.0.0"
+		}
+	},
+	"css": {
+		"app": {
+			"url": "demo/css/app.css",
+			"v": "1.0.0"
+		},
+		"demo": {
+			"url": "demo/css/demo.css",
+			"v": "1.0.0"
+		}
+	},
+	"page": {
+		"demo": {
+			"v": "1.0.0",
+      			"js": ["demo"],
+			"css": ["demo"]
+		}
+	}
+}
