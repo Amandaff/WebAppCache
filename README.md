@@ -1,7 +1,8 @@
 WebAppCache
 ===========
 
-WebApp Cache Using localStorage(SessionStorage)
+WebApp Cache Using localStorage(SessionStorage)  
+intro：http://www.zawaliang.com/2013/04/277.html
 
 
 
@@ -14,7 +15,7 @@ WebApp Cache Using localStorage(SessionStorage)
 
 [Demo]
 ----------------------
-目录结构如下  
+目录结构如下：  
 WebAppCache约定app.html与app.json处于相同的目录层级，其他的资源不作要求。
 ```
 app/--
