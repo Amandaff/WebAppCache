@@ -421,13 +421,7 @@
 
         // js
         arrText.js = arrText.js.join(';');
-        appendJs(head, arrText.js);
-       
-        // 锚点处理
-        // var offsetTop = location.hash ? $('a[name="' + location.hash.substr(1) + '"]').position().top : 1;
-        // setTimeout(function() {
-        //     window.scrollTo(0, offsetTop);
-        // }, 100);
+        appendJs(head, arrText.js); 
 
         arrText = page = js = css = null;
 
