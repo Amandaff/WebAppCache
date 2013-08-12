@@ -1,5 +1,5 @@
 /**
- * WebAppCache v1.0.0
+ * WebAppCache v1.0.1
  * 2013, zawa, www.zawaliang.com
  * Licensed under the MIT license.
  */
@@ -360,9 +360,13 @@
         }
     }
 
+    // http://www.jspatterns.com/the-ridiculous-case-of-adding-a-script-element/
+    // http://www.whatwg.org/specs/web-apps/current-work/multipage/scripting-1.html#dom-script-text
     var appendJs = function(head, text) {
         var script = document.createElement('script');
         script.type = 'text/javascript';
+        // script.charset = 'utf-8';
+        script.defer = 'true';
         script.text = text;
         head.appendChild(script);
     };
@@ -403,7 +407,6 @@
 
         page = page.substr(0, p) + css + page.substr(p);
 
-
         // document.write script的方式,对内容汇总含script的脚本比较敏感,容易出问题,因此不适用此方式插入脚本
         // var js = '\x3Cscript type="text/javascript">' + arrText.js.join(';\n') + '\x3C/script>\n';
         //     hp = page.indexOf('</head>'),
@@ -415,13 +418,16 @@
         // 写入文档流
         document.open('text/html', 'replace'); // replace: 新建的文档会覆盖当前页面的文档（清空原文档里的所有元素，浏览器的后退按钮不可用）；
         document.write(page);
-        document.close();
 
         var head = document.getElementsByTagName('head')[0];
 
         // js
         arrText.js = arrText.js.join(';');
-        appendJs(head, arrText.js); 
+        appendJs(head, arrText.js);
+
+        // bugfix: 修复微信5.0以下版本要刷新才会触发JS的问题, 这里将document.close后置到appendJS后
+        // 或者不显式调用document.close
+        document.close();
 
         arrText = page = js = css = null;
 
