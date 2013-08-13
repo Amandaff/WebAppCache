@@ -28,12 +28,10 @@ app/--
        |---inner/
              |---demo.html  
  |---js/
-       |---zepto.min.js
-       |---touch.min.js
        |---app.js
        |---demo.js
  |---css/
-       |---global.css
+       |---app.css
        |---inner/
              |---demo.css
 ```
@@ -52,21 +50,21 @@ app.json应用配置文件
 	// js配置
 	"jsConfig": {
 		// js基准路径
-		"path": "demo/js/",
+		"path": "app/js/",
 		// js缺省后缀
 		"suffix": ".js"
 	},
 	// css配置
 	"cssConfig": {
 		// css基准路径
-		"path": "demo/css/",
+		"path": "app/css/",
 		// css缺省后缀
 		"suffix": ".css"
 	},
 	// 页面配置
 	"pageConfig": {
 		// 页面基准路径
-		"path": "demo/",
+		"path": "app/page/",
 		// 页面缺省后缀
 		"suffix": ".html"
 	},
@@ -74,23 +72,23 @@ app.json应用配置文件
 	"js": {
 		"app": {
 			// 指定拉取路径,url为空时以基准路径+模块名拉取+缺省后缀
-			"url": "demo/js/app.js",
+			"url": "app/js/app.js",
 			// 版本号,-1时不作缓存
 			"v": "1.0.0"
 		},
 		"demo": {
-			"url": "demo/js/demo.js",
+			"url": "app/js/demo.js",
 			"v": "1.0.0"
 		}
 	},
 	// 声明应用css资源
 	"css": {
 		"app": {
-			"url": "demo/css/app.css",
+			"url": "app/css/app.css",
 			"v": "1.0.0"
 		},
-		"demo": {
-			"url": "demo/css/demo.css",
+		"inner.demo": {
+			"url": "app/css/inner/demo.css",
 			"v": "1.0.0"
 		}
 	},
@@ -100,7 +98,7 @@ app.json应用配置文件
 			"v": "1.0.0",
 			// 声明除去核心加载外需要加载的资源
       			"js": ["demo"],
-			"css": ["demo"]
+			"css": ["inner.demo"]
 		}
 	}
 }
@@ -122,7 +120,7 @@ app.html缓存调度
 
 实际请求地址如下：
 ```
-demo/demo.html  -> app/app.html?v=demo
+inner/demo.html  -> app/app.html?v=inner.demo
 ```
 
 一些注意事项  
