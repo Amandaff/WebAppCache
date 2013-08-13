@@ -407,14 +407,6 @@
 
         page = page.substr(0, p) + css + page.substr(p);
 
-        // document.write script的方式,对内容汇总含script的脚本比较敏感,容易出问题,因此不适用此方式插入脚本
-        // var js = '\x3Cscript type="text/javascript">' + arrText.js.join(';\n') + '\x3C/script>\n';
-        //     hp = page.indexOf('</head>'),
-        //     match = page.match(/<script(?:\s.*)?>/),
-        //     p = match ? Math.min(page.indexOf(match[0]), hp) : hp;
-
-        // page = page.substr(0, p) + js + page.substr(p);
-
         // 写入文档流
         document.open('text/html', 'replace'); // replace: 新建的文档会覆盖当前页面的文档（清空原文档里的所有元素，浏览器的后退按钮不可用）；
         document.write(page);
