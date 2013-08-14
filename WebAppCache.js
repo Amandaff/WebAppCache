@@ -4,7 +4,7 @@
  * Licensed under the MIT license.
  */
 
-;(function(window, document) {
+;(function(window, document, undefined) {
 
         var _local = window.localStorage,
         _session = window.sessionStorage,
@@ -506,4 +506,4 @@
 
     init();
 
-})(window, document, undefined);
+})(window, document);
