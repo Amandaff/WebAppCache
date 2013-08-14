@@ -1,5 +1,5 @@
 /**
- * WebAppCache v1.0.1
+ * WebAppCache v1.0.2
  * 2013, zawa, www.zawaliang.com
  * Licensed under the MIT license.
  */
@@ -8,7 +8,7 @@
 
         var _local = window.localStorage,
         _session = window.sessionStorage,
-        _pathname = window.location.pathname
+        _pathname = window.location.pathname,
         _appName = _pathname, // App标识
         _fireQueue = [], // 最终需要执行的队列
         _onload = false,
@@ -34,8 +34,9 @@
                     callback.call(null, xhr.responseText);
                 } else {
                     var msg = status ? 'Error:' + status : 'Abort';
-                    (getType(errorHandler) == 'function') ? 
-                        errorHandler(status, msg) : alert(msg);
+                     (getType(errorHandler) == 'function')
+                        ? errorHandler(status, msg) 
+                        : null;
                 }
             }
         };
@@ -174,7 +175,8 @@
      * 缓存非核心资源队列
      */
     function sourceQueue(sq) {
-        return (getType(sq) != 'undefined') ? cache('Source', sq)
+        return (getType(sq) != 'undefined')
+            ? cache('Source', sq)
             : cache('Source') || [];
     }
 
@@ -362,13 +364,15 @@
 
     // http://www.jspatterns.com/the-ridiculous-case-of-adding-a-script-element/
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/scripting-1.html#dom-script-text
-    var appendJs = function(head, text) {
-        var script = document.createElement('script');
+    var appendJs = function(text) {
+        var body = document.getElementsByTagName('body')[0],
+            script = document.createElement('script');
+
         script.type = 'text/javascript';
         // script.charset = 'utf-8';
         script.defer = 'true';
         script.text = text;
-        head.appendChild(script);
+        body.appendChild(script); // 插入到body下,防止defer不支持造成js于DOM加载完成前触发
     };
 
     /**
@@ -411,11 +415,9 @@
         document.open('text/html', 'replace'); // replace: 新建的文档会覆盖当前页面的文档（清空原文档里的所有元素，浏览器的后退按钮不可用）；
         document.write(page);
 
-        var head = document.getElementsByTagName('head')[0];
-
         // js
         arrText.js = arrText.js.join(';');
-        appendJs(head, arrText.js);
+        appendJs(arrText.js);
 
         // bugfix: 修复微信5.0以下版本要刷新才会触发JS的问题, 这里将document.close后置到appendJS后
         // 或者不显式调用document.close
