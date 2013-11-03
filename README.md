@@ -1,4 +1,4 @@
-WebAppCache
+WebAppCache 1.0.3
 ===========
 
 WebApp Cache Using localStorage(SessionStorage)  
