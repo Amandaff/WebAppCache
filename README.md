@@ -125,7 +125,9 @@ app.html缓存调度
 inner/demo.html  -> app/app.html?v=inner.demo
 ```
 
-一些注意事项  
+[一些注意事项]
+----------------------
 1. app.html?v=xxx中缺省为v=index  
-2. 核心css资源于所有其他css资源前渲染  
-3. 由于document.write对脚本中的script敏感，WebAppCache采取动态生成脚本执行的方式，这就可能造成页面中的脚本于缓存中的脚本前执行的问题。所以对于依赖app.json中声明的js的脚本，建议通过配置到app.json里处理来解决，这个问题后续优化解决。
+2. 核心css资源于所有其他css资源前渲染 
+3. 资源不可跨域访问 
+4. 由于document.write对脚本中的script敏感，WebAppCache采取动态生成脚本执行的方式，这就可能造成页面中的脚本于缓存中的脚本前执行的问题。所以对于依赖app.json中声明的js的脚本，建议通过配置到app.json里处理来解决，这个问题后续优化解决。
