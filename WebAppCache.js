@@ -1,24 +1,24 @@
 /**
- * WebAppCache v1.0.2
+ * WebAppCache v1.0.3
  * 2013, zawa, www.zawaliang.com
  * Licensed under the MIT license.
  */
 
 ;(function(window, document, undefined) {
-
-        var _local = window.localStorage,
-        _session = window.sessionStorage,
-        _pathname = window.location.pathname,
+    var _local = localStorage,
+        _session = sessionStorage,
+        _pathname = location.pathname,
         _appName = _pathname, // App标识
         _fireQueue = [], // 最终需要执行的队列
         _onload = false,
         _renderReady = false,
         _cache = {}, 
-        _storage = null;
+        _storage = null,
+        _viewName = getParam('v');
 
 
     function getParam(name) {
-        var p = '&' + window.location.search.substr(1) + '&',
+        var p = '&' + location.search.substr(1) + '&',
             re = new RegExp('&' + name + '=([^&]*)&'),
             r = p.match(re);
 
@@ -40,6 +40,7 @@
                 }
             }
         };
+        // xhr.withCredentials = true;
         xhr.open('get', url, true);
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         xhr.send(null);
@@ -87,7 +88,7 @@
             var r = _storage.getItem(prefix + n);
 
             if (r === null) {
-                return r;
+                return null;
             }
 
             try {
@@ -126,7 +127,7 @@
                 // 缓存区不足时,淘汰当前应用缓存重新发起请求
                 if (sq.length < 1) {
                     clearAppCache(_appName);
-                    window.location.reload(false);
+                    location.reload(false);
                     return;
                 }
 
@@ -194,6 +195,7 @@
                 v2.v = v2.v || ''; // 版本号缺省为空
                 source[name] = v2;
             });
+
             // 删除格式化后的js css page配置
             conf[v] = null;
             delete conf[v];
@@ -201,7 +203,6 @@
         conf.__source__ = source;
         return conf;
     }
-
 
     function concatArr(arr, type) {
         each(arr, function(k, v) {
@@ -240,7 +241,16 @@
     /**
      * 队列去重与依赖处理
      */
-    function getFireQueue(jsQueue, cssQueue, config) {
+    function handleFireQueue(config) {
+        var view = 'page_' + _viewName, // 加载的视图
+            source = config.__source__,
+            view = source[view] ? view : 'page_index',
+            c = source[view] || {},
+            jsCore = config.jsCore || [],
+            cssCore = config.cssCore || [],
+            jsQueue = jsCore.concat(c.js || []),
+            cssQueue = cssCore.concat(c.css || []);
+
         jsQueue = concatArr(jsQueue, 'js_');
         cssQueue = concatArr(cssQueue, 'css_');
 
@@ -251,9 +261,9 @@
         // TODO: 依赖管理(暂时按数组顺序加载)
 
         // 保持css队列在前, 提升后续开始加载时间
-        return cssQueue.concat(jsQueue);
+        _fireQueue = cssQueue.concat(jsQueue);
+        _fireQueue.push(view);
     }
-
 
     /**
      * 获取资源路径
@@ -321,17 +331,11 @@
      * 版本比较
      */
     function cmpVersion(config) {
-        var view = 'page_' + getParam('v'), // 加载的视图
-            source = config.__source__,
-            view = source[view] ? view : 'page_index',
-            c = source[view] || {},
+        var source = config.__source__,
             jsCore = config.jsCore || [],
-            cssCore = config.cssCore || [],
-            jsQueue = jsCore.concat(c.js || []),
-            cssQueue = cssCore.concat(c.css || []);
+            cssCore = config.cssCore || [];
 
-        _fireQueue = getFireQueue(jsQueue, cssQueue, config);
-        _fireQueue.push(view);
+        handleFireQueue(config);
 
         // 缓存核心资源队列(按依赖权重升序排列,css在前,js在后, 用于缓存队列管理)
         var core = [];
@@ -344,7 +348,6 @@
         var udQueue = [];
         each(_fireQueue, function(k, v) {
             _cache[v] = cache(v);
-
 
             if (source[v].v == -1 // 不需缓存
                 || _cache[v] === null  // 本地不存在v的缓存
@@ -401,7 +404,8 @@
             arrText[type].push(_cache[v] || '');
         });
 
-        var page =  arrText.page.join('');
+        var page = arrText.page.join('');
+
 
         // css优先于页面其他样式渲染
         var css = '<style type="text/css">' + arrText.css.join('\n') + '<\/style>\n',
@@ -427,6 +431,31 @@
 
         // 清空标记位
         _onload = _renderReady = false;
+    }
+
+    /**
+     * 离线处理
+     */
+    function onOffLine(config) {
+        var cacheMatch = 0;
+
+        handleFireQueue(config);
+
+        // 获取本地缓存
+        each(_fireQueue, function(k, v) {
+            _cache[v] = cache(v);
+
+            // 缓存是否命中
+            if (_cache[v] !== null) {
+                cacheMatch++;
+            }
+        });
+
+        if (cacheMatch == _fireQueue.length) {
+            render();
+        } else {
+            document.write(config.networkError);
+        }
     }
 
     function init() {
@@ -460,10 +489,11 @@
 
         _cache['Config'] = config;
 
+
         // 离线情况下,直接渲染输出
         if (!navigator.onLine) {
-             render();
-             return;
+            onOffLine(config);
+            return;
         }
 
 
