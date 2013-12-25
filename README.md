@@ -1,7 +1,7 @@
 WebAppCache 1.0.3
 ===========
 
-WebApp Cache Using localStorage(SessionStorage)  
+轻量化的WebApp缓存管理,使用Application Cache + localStorage(SessionStorage)  
 intro：http://www.zawaliang.com/2013/04/277.html
 
 
